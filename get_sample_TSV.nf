@@ -234,6 +234,7 @@ process gnomADReport {
     input:
         val gnomAD
         path regionFile
+        path dataDir
 
      output:
         path "${output}"
@@ -244,7 +245,7 @@ process gnomADReport {
     # Load necessary modules
     module load hurcs bcftools
 
-    gnomAD_report.sh ${regionFile} ${regionFile.simpleName} ${output}
+    gnomAD_report.sh ${regionFile} ${regionFile.simpleName} ${params.curGnomADDir} ${output}
     """
 }
 
@@ -301,17 +302,17 @@ workflow {
             needGnomAD: true
             }.set { chrom }
 
-    // chrom.needGnomAD.view {"needGnomAD $it"}
-    // chrom.noGnomAD.view {"already have gnomAD $it"}
-    // // create region file for each chromosome
-    // region = createRegionFile(chrom.needGnomAD, regionFile)
-    // // if the region file have more peaks than MAX_REGIONS, it will be split
-    // splitGnomAD = getGnomAD(region.flatten()) //.groupTuple()
-    // splitGnomAD.groupTuple().view()
-    // // merge gnomAD data from same chromosome
-    // gnomAD = mergeGnomAD(splitGnomAD.groupTuple(),dataDir).concat(proxyGnomAD(chrom.noGnomAD,regionFile, dataDir))
-    // // generates a report to see if the process done well
-    // gnomADReport(gnomAD.collect().flatten(),regionFile)
+    chrom.needGnomAD.view {"needGnomAD $it"}
+    chrom.noGnomAD.view {"already have gnomAD $it"}
+    // create region file for each chromosome
+    region = createRegionFile(chrom.needGnomAD, regionFile)
+    // if the region file have more peaks than MAX_REGIONS, it will be split
+    splitGnomAD = getGnomAD(region.flatten()) //.groupTuple()
+    splitGnomAD.groupTuple().view()
+    // merge gnomAD data from same chromosome
+    gnomAD = mergeGnomAD(splitGnomAD.groupTuple(),dataDir).concat(proxyGnomAD(chrom.noGnomAD,regionFile, dataDir))
+    // generates a report to see if the process done well
+    gnomADReport(gnomAD.toList(),regionFile, dataDir)
 
     // processing the sample files, 
     // checks if the file were processed before
@@ -320,15 +321,15 @@ workflow {
             haveRawFile: file("${params.sampleRawDir}/${it.split("/")[-1].replace('.vcf.gz','')}.tsv" ).exists()
             noRawFile: true
             }.set { samples }
-println samples.haveRawFile.view()
-//     sampleInput = samples.noRawFile.combine([regionFile])
-//     samplesOutput = getSamples(sampleInput, dataDir).collect().concat(proxySamples(samples.haveRawFile, dataDir))
 
-//     // merge gnomAD data & the sample data
-//     merged = mergeChrom(gnomAD, samplesOutput).collect()
-//     // doing some cleaning of the file
-//     cleanD = cleanData(merged, regionFile, sampleFile)
+    sampleInput = samples.noRawFile.combine([regionFile])
+    samplesOutput = getSamples(sampleInput, dataDir).collect().concat(proxySamples(samples.haveRawFile, dataDir))
 
-//     // upload the data to the dropbox, if params.upload == true
-//     uploadData(cleanD, sampleFile)  
+    // merge gnomAD data & the sample data
+    merged = mergeChrom(gnomAD, samplesOutput).collect()
+    // doing some cleaning of the file
+    cleanD = cleanData(merged, regionFile, sampleFile)
+
+    // upload the data to the dropbox, if params.upload == true
+    uploadData(cleanD, sampleFile)  
 }
