@@ -330,6 +330,8 @@ workflow {
     // doing some cleaning of the file
     cleanD = cleanData(merged, regionFile, sampleFile)
 
+
     // upload the data to the dropbox, if params.upload == true
     uploadData(cleanD, sampleFile)  
+
 }
