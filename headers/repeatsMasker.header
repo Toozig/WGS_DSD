@@ -1,0 +1,3 @@
+##INFO=<ID=RM_ID,Number=1,Type=String,Description="the type of repeats patteren">
+##INFO=<ID=RM_LENGTH,Number=1,Type=Integer,Description="the lenght of repeats patteren">
+##INFO=<ID=RM_STRAND,Number=1,Type=Character,Description="the lenght of repeats patteren">

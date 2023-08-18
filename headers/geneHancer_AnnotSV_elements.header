@@ -1,0 +1,3 @@
+##INFO=<ID=GHid,Number=1,Type=String,Description="the ID of GenHancer">
+##INFO=<ID=GH_is_elite,Number=1,Type=Integer,Description="If GENHANCER CONSIDDER THIS ELISE">
+##INFO=<ID=GH_type,Number=1,Type=Character,Description="regulatory_element_type">
