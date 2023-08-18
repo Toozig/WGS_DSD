@@ -91,7 +91,7 @@ process getSamples{
     """
     # Loading necessary modules
     module load hurcs bcftools
-    bcft_to_tsv.sh ${pathFile} ${regionFile} ${output}
+    getSamples.sh ${pathFile} ${regionFile} ${output}
     """
 }
 
@@ -227,6 +227,28 @@ process proxySamples {
     """
 }
 
+process gnomADReport {
+    label "small_slurm"
+
+    publishDir params.curGnomADDir, mode: 'move' 
+    input:
+        val gnomAD
+        path regionFile
+
+     output:
+        path "${output}"
+    
+    script:
+    output="${regionFile.simpleName}.report"
+    """
+    # Load necessary modules
+    module load hurcs bcftools
+
+    gnomAD_report.sh ${regionFile} ${regionFile.simpleName} ${output}
+    """
+}
+
+
 workflow {
     // using default parameters if they werent provided
     if (params.sample_file == ''){
@@ -288,7 +310,8 @@ workflow {
     splitGnomAD.groupTuple().view()
     // merge gnomAD data from same chromosome
     gnomAD = mergeGnomAD(splitGnomAD.groupTuple(),dataDir).concat(proxyGnomAD(chrom.noGnomAD,regionFile, dataDir))
-
+    // generates a report to see if the process done well
+    gnomADReport(gnomAD.collect().flatten(),regionFile)
 
     // processing the sample files, 
     // checks if the file were processed before
