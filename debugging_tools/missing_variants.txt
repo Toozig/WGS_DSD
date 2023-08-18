@@ -1,0 +1,167 @@
+chr1
+chr1	248927609	248928681	SE4266
+last variant in our file
+chr1	240881154	G	A	PASS	0.00263051	0.00474763
+last 2 variant in gnomAD vcf
+chr1	248928681	C	T	PASS	6.56987e-06	2.41324e-05
+----------------------------------
+chr2
+chr2	242087690	242089314	GR.PG.PS.SE24566
+last variant in our file
+chr2	242089312	C	T	PASS	0.000997147	0.00920117
+last 2 variant in gnomAD vcf
+chr2	242089312	C	T	PASS	0.000997147	0.00920117
+----------------------------------
+chr3
+chr3	198079937	198081781	GR.PG.PS.SE29762
+last variant in our file
+chr3	198081780	T	C	PASS	6.57402e-06	2.41371e-05
+last 2 variant in gnomAD vcf
+chr3	198081780	T	C	PASS	6.57402e-06	2.41371e-05
+----------------------------------
+chr4
+chr4	190020487	190021594	PG31307
+last variant in our file
+chr4	190021591	G	T	PASS	6.7312e-06	2.4914e-05
+last 2 variant in gnomAD vcf
+chr4	190021591	G	T	PASS	6.7312e-06	2.4914e-05
+----------------------------------
+chr5
+chr5	181259757	181262304	GR.PG.PS.SE33154
+last variant in our file
+chr5	181262303	T	C	PASS	1.43771e-05	5.40891e-05
+last 2 variant in gnomAD vcf
+chr5	181262303	T	C	PASS	1.43771e-05	5.40891e-05
+----------------------------------
+chr6
+chr6	170583533	170585364	48347_XY1235_GR.PG.PS.SE35380
+last variant in our file
+chr6	170585364	T	C	PASS	0.0012284	0.00441325
+last 2 variant in gnomAD vcf
+chr6	170585364	T	C	PASS	0.0012284	0.00441325
+----------------------------------
+chr7
+chr7	159143752	159145848	27505_XY1235_GR.PG.PS37453
+last variant in our file
+chr7	159145842	T	C	PASS	6.56832e-06	1.4699e-05
+last 2 variant in gnomAD vcf
+chr7	159145842	T	C	PASS	6.56832e-06	1.4699e-05
+----------------------------------
+chr8
+chr8	145069100	145071125	GR.PG39136
+last variant in our file
+chr8	145071125	C	T	PASS	6.57177e-06	.
+last 2 variant in gnomAD vcf
+chr8	145071125	C	T	PASS	6.57177e-06	.
+----------------------------------
+chr9
+chr9	138073657	138075273	61085_XY3Y15
+last variant in our file
+chr9	138075269	A	C	PASS	6.56892e-06	1.46959e-05
+last 2 variant in gnomAD vcf
+chr9	138075269	A	C	PASS	6.56892e-06	1.46959e-05
+----------------------------------
+chr10
+chr10	133527456	133529776	PG6158
+last variant in our file
+chr10	133529775	G	A	PASS	0.00020361	0.000723519
+last 2 variant in gnomAD vcf
+chr10	133529775	G	A	PASS	0.00020361	0.000723519
+----------------------------------
+chr11
+chr11	134905128	134906614	GR.PG8573
+last variant in our file
+chr11	134906609	G	A	PASS	1.31411e-05	0.000207039
+last 2 variant in gnomAD vcf
+chr11	134906609	G	A	PASS	1.31411e-05	0.000207039
+----------------------------------
+chr12
+chr12	133180959	133182103	GR.PG.PS.SE10565
+last variant in our file
+chr12	133182099	C	T	PASS	5.25707e-05	0.000206954
+last 2 variant in gnomAD vcf
+chr12	133182099	C	T	PASS	5.25707e-05	0.000206954
+----------------------------------
+chr13
+chr13	114313679	114315739	105844_XY1235_GR.PG.PS.SE11320
+last variant in our file
+chr13	114315738	A	G	PASS	0.00233915	0.00506586
+last 2 variant in gnomAD vcf
+chr13	114315738	A	G	PASS	0.00233915	0.00506586
+----------------------------------
+chr14
+chr14	106876635	106878217	GR.PG.SE12717
+last variant in our file
+chr14	106878216	A	C	PASS	6.56909e-06	1.4699e-05
+last 2 variant in gnomAD vcf
+chr14	106878216	A	C	PASS	6.56909e-06	1.4699e-05
+----------------------------------
+chr15
+chr15	101811992	101812466	65158_X3
+last variant in our file
+chr15	101812466	T	C	PASS	6.57065e-06	1.46998e-05
+last 2 variant in gnomAD vcf
+chr15	101812466	T	C	PASS	6.57065e-06	1.46998e-05
+----------------------------------
+chr16
+chr16	90081720	90082843	GR.PG.PS.SE15892
+last variant in our file
+chr16	90082842	AG	A	PASS	6.57514e-06	1.47024e-05
+last 2 variant in gnomAD vcf
+chr16	90082842	AG	A	PASS	6.57514e-06	1.47024e-05
+----------------------------------
+chr17
+chr17	83204444	83206167	22415_XY1235
+last variant in our file
+chr17	83206160	T	C	PASS	6.5722e-06	1.46994e-05
+last 2 variant in gnomAD vcf
+chr17	83206160	T	C	PASS	6.5722e-06	1.46994e-05
+----------------------------------
+chr18
+chr18	80251789	80252572	56293_XY135
+last variant in our file
+chr18	80252562	G	C	PASS	1.97361e-05	4.4128e-05
+last 2 variant in gnomAD vcf
+chr18	80252562	G	C	PASS	1.97361e-05	4.4128e-05
+----------------------------------
+chr19
+chr19	58575131	58576192	GR.PG.PS.SE21616
+last variant in our file
+chr19	58576189	C	T	PASS	6.57324e-06	1.4702e-05
+last 2 variant in gnomAD vcf
+chr19	58576189	C	T	PASS	6.57324e-06	1.4702e-05
+----------------------------------
+chr20
+chr20	64327275	64328605	PG25831
+last variant in our file
+chr20	64328600	G	A	PASS	0.000165471	0.00401182
+last 2 variant in gnomAD vcf
+chr20	64328600	G	A	PASS	0.000165471	0.00401182
+----------------------------------
+chr21
+chr21	46667011	46668445	GR.PG.PS.SE26276
+last variant in our file
+chr21	46668445	C	T	PASS	6.57454e-06	0.000207039
+last 2 variant in gnomAD vcf
+chr21	46668445	C	T	PASS	6.57454e-06	0.000207039
+----------------------------------
+chr22
+chr22	50782494	50784258	42242_XY1235_GR.PG.PS.SE27454
+last variant in our file
+chr22	50784254	C	T	PASS	0.000160606	0.000324493
+last 2 variant in gnomAD vcf
+chr22	50784254	C	T	PASS	0.000160606	0.000324493
+----------------------------------
+chrX
+chrX	155880185	155882020	GR.PG.PS.SE42007
+last variant in our file
+
+last 2 variant in gnomAD vcf
+chrX	155882011	C	T	PASS	4.60054e-05	0.000102905
+----------------------------------
+chrY
+chrY	57183957	57184720	15822_Y35
+last variant in our file
+
+last 2 variant in gnomAD vcf
+----------------------------------

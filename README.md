@@ -41,9 +41,10 @@ Before executing the script, make sure to fill in the parameter file `get_sample
 - `bed_file`: Region file in BED format.
 
 **Outputs:**
-- `gnomADByRegionDir/regionFile`: Directory containing gnomAD files by region.
-- `output_dir/$regionFile.simpleName/$sampleFile.simpleName/samples_raw`: Raw TSV file for samples.
-- `$params.output_dir/$regionFile.simpleName/$sampleFile.simpleName/regionFile.simpleName.sampleFile.simpleName.prq`: Table with combined data.
+- `gnomADByRegionDir/regionFile/gnomAD`: Directory containing gnomAD files by region.
+- `gnomADByRegionDir/regionFile/gnomAD/${regionFile.simpleName}.report`: Report of getting gnomAD data
+- `gnomADByRegionDir/regionFile/samples_raw`: Raw TSV file for samples.
+- `gnomADByRegionDir/regionFile/${regionFile.simpleName}.${sampleFile.simpleName}.prq`: Table with combined data.
 
 To run the script, follow these steps:
 

@@ -91,7 +91,7 @@ process getSamples{
     """
     # Loading necessary modules
     module load hurcs bcftools
-    bcft_to_tsv.sh ${pathFile} ${regionFile} ${output}
+    getSamples.sh ${pathFile} ${regionFile} ${output}
     """
 }
 
@@ -227,6 +227,28 @@ process proxySamples {
     """
 }
 
+process gnomADReport {
+    label "small_slurm"
+
+    publishDir params.curGnomADDir, mode: 'move' 
+    input:
+        val gnomAD
+        path regionFile
+
+     output:
+        path "${output}"
+    
+    script:
+    output="${regionFile.simpleName}.report"
+    """
+    # Load necessary modules
+    module load hurcs bcftools
+
+    gnomAD_report.sh ${regionFile} ${regionFile.simpleName} ${output}
+    """
+}
+
+
 workflow {
     // using default parameters if they werent provided
     if (params.sample_file == ''){
@@ -246,8 +268,8 @@ workflow {
     sampleFile = file(sampleFile)
     dataDir = file('data/')
     params.outputDir = "$params.output_dir/$regionFile.simpleName/$sampleFile.simpleName"
-    params.curGnomADDir = "$params.gnomADByRegionDir/$regionFile.simpleName"
-    params.sampleRawDir=  "${params.outputDir}/samples_raw"
+    params.curGnomADDir = "$params.gnomADByRegionDir/$regionFile.simpleName/gnomAD"
+    params.sampleRawDir=  "$params.gnomADByRegionDir/$regionFile.simpleName/samples_raw"
     checkIfExistsResult(regionFile, sampleFile)
 
     log.info """
@@ -279,32 +301,34 @@ workflow {
             needGnomAD: true
             }.set { chrom }
 
-    chrom.needGnomAD.view {"needGnomAD $it"}
-    chrom.noGnomAD.view {"already have gnomAD $it"}
-    // create region file for each chromosome
-    region = createRegionFile(chrom.needGnomAD, regionFile)
-    // if the region file have more peaks than MAX_REGIONS, it will be split
-    splitGnomAD = getGnomAD(region.flatten()) //.groupTuple()
-    splitGnomAD.groupTuple().view()
-    // merge gnomAD data from same chromosome
-    gnomAD = mergeGnomAD(splitGnomAD.groupTuple(),dataDir).concat(proxyGnomAD(chrom.noGnomAD,regionFile, dataDir))
-
+    // chrom.needGnomAD.view {"needGnomAD $it"}
+    // chrom.noGnomAD.view {"already have gnomAD $it"}
+    // // create region file for each chromosome
+    // region = createRegionFile(chrom.needGnomAD, regionFile)
+    // // if the region file have more peaks than MAX_REGIONS, it will be split
+    // splitGnomAD = getGnomAD(region.flatten()) //.groupTuple()
+    // splitGnomAD.groupTuple().view()
+    // // merge gnomAD data from same chromosome
+    // gnomAD = mergeGnomAD(splitGnomAD.groupTuple(),dataDir).concat(proxyGnomAD(chrom.noGnomAD,regionFile, dataDir))
+    // // generates a report to see if the process done well
+    // gnomADReport(gnomAD.collect().flatten(),regionFile)
 
     // processing the sample files, 
     // checks if the file were processed before
+    println "${params.sampleRawDir}"
     Channel.from(sampleFile.readLines()).branch {
             haveRawFile: file("${params.sampleRawDir}/${it.split("/")[-1].replace('.vcf.gz','')}.tsv" ).exists()
             noRawFile: true
             }.set { samples }
+println samples.haveRawFile.view()
+//     sampleInput = samples.noRawFile.combine([regionFile])
+//     samplesOutput = getSamples(sampleInput, dataDir).collect().concat(proxySamples(samples.haveRawFile, dataDir))
 
-    sampleInput = samples.noRawFile.combine([regionFile])
-    samplesOutput = getSamples(sampleInput, dataDir).collect().concat(proxySamples(samples.haveRawFile, dataDir))
+//     // merge gnomAD data & the sample data
+//     merged = mergeChrom(gnomAD, samplesOutput).collect()
+//     // doing some cleaning of the file
+//     cleanD = cleanData(merged, regionFile, sampleFile)
 
-    // merge gnomAD data & the sample data
-    merged = mergeChrom(gnomAD, samplesOutput).collect()
-    // doing some cleaning of the file
-    cleanD = cleanData(merged, regionFile, sampleFile)
-
-    // upload the data to the dropbox, if params.upload == true
-    uploadData(cleanD, sampleFile)  
+//     // upload the data to the dropbox, if params.upload == true
+//     uploadData(cleanD, sampleFile)  
 }

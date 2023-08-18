@@ -7,7 +7,7 @@
   "REGION_SPLIT_SIZE" : 6000,
   "MAX_REGIONS" : 10000,
   "cur_regions": "data/read_only/ATAC_seq/merged/merged_mATAC_hATAC_0507.bed",
-  "all_samples": "data/read_only/processed/all_samples.txt",
+  "all_samples": "data/read_only/samples/processed/all_samples.txt",
   "output_dir": "data/pipeline_outputs/variants_gnomAD",
   "uploadDir" : "Nitzan_Gonen_lab/Joint_projects/WGS_on_DSD/data/pipeline_outputs/variants_gnomAD"
 
