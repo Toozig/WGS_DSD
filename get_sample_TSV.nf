@@ -236,6 +236,7 @@ process gnomADReport {
         path regionFile
         path dataDir
 
+
      output:
         path "${output}"
     
@@ -314,6 +315,7 @@ workflow {
     // generates a report to see if the process done well
     gnomADReport(gnomAD.toList(),regionFile, dataDir)
 
+
     // processing the sample files, 
     // checks if the file were processed before
     println "${params.sampleRawDir}"
@@ -321,9 +323,15 @@ workflow {
             haveRawFile: file("${params.sampleRawDir}/${it.split("/")[-1].replace('.vcf.gz','')}.tsv" ).exists()
             noRawFile: true
             }.set { samples }
+println samples.haveRawFile.view()
+//     sampleInput = samples.noRawFile.combine([regionFile])
+//     samplesOutput = getSamples(sampleInput, dataDir).collect().concat(proxySamples(samples.haveRawFile, dataDir))
 
-    sampleInput = samples.noRawFile.combine([regionFile])
-    samplesOutput = getSamples(sampleInput, dataDir).collect().concat(proxySamples(samples.haveRawFile, dataDir))
+//     // merge gnomAD data & the sample data
+//     merged = mergeChrom(gnomAD, samplesOutput).collect()
+//     // doing some cleaning of the file
+//     cleanD = cleanData(merged, regionFile, sampleFile)
+
 
     // merge gnomAD data & the sample data
     merged = mergeChrom(gnomAD, samplesOutput).collect()
@@ -332,4 +340,5 @@ workflow {
 
     // upload the data to the dropbox, if params.upload == true
     uploadData(cleanD, sampleFile)  
+
 }
