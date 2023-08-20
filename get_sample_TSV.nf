@@ -325,7 +325,6 @@ workflow {
     sampleInput = samples.noRawFile.combine([regionFile])
     samplesOutput = getSamples(sampleInput, dataDir).collect().concat(proxySamples(samples.haveRawFile, dataDir).collect())
 
-    samplesOutput.view()
 
 
     // merge gnomAD data & the sample data
