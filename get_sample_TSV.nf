@@ -323,15 +323,18 @@ workflow {
             }.set { samples }
 
     sampleInput = samples.noRawFile.combine([regionFile])
-    samplesOutput = getSamples(sampleInput, dataDir).collect().concat(proxySamples(samples.haveRawFile, dataDir))
+    samplesOutput = getSamples(sampleInput, dataDir).collect().concat(proxySamples(samples.haveRawFile, dataDir).collect())
+
+    samplesOutput.view()
+
 
     // merge gnomAD data & the sample data
     merged = mergeChrom(gnomAD, samplesOutput).collect()
-    // doing some cleaning of the file
+    // // doing some cleaning of the file
     cleanD = cleanData(merged, regionFile, sampleFile)
 
 
-    // upload the data to the dropbox, if params.upload == true
+    // // upload the data to the dropbox, if params.upload == true
     uploadData(cleanD, sampleFile)  
 
 }
