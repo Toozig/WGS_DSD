@@ -24,7 +24,9 @@ process cleanData {
     """
     source ${params.VENV}
     clean_tsv.py ${outputName} ${chrom_tsv.join(' ')}
+    ehco "processed file moved to ${params.outputDir}"
     """
+    
 }
 
 process uploadData {
