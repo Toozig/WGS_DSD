@@ -112,6 +112,7 @@ process mergeChrom {
     input:
     tuple val(chrom), path(gnomAD), path(gnomADtbi)
     path file_list
+    
 
     output:
     path "${chrom}.tsv"
@@ -326,9 +327,9 @@ workflow {
     samplesOutput = getSamples(sampleInput, dataDir).collect().concat(proxySamples(samples.haveRawFile, dataDir).collect())
 
 
-
+    
     // merge gnomAD data & the sample data
-    merged = mergeChrom(gnomAD, samplesOutput).collect()
+    merged = mergeChrom(gnomAD, samplesOutput.collect()).collect()
     // // doing some cleaning of the file
     cleanD = cleanData(merged, regionFile, sampleFile)
 
