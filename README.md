@@ -55,7 +55,7 @@ To run the script, follow these steps:
 3. Execute the following command:
 
 ```bash
-~/nextflow run get_sample_TSV.nf --sample_file data/read_only/samples/processed/all_samples.txt --params-file pipeline_param.json --upload true -c process-selector.config
+~/nextflow run get_sample_TSV.nf --sample_file data/read_only/samples/processed/all_samples.txt  -params-file get_sample_TSV.json --upload true -c process-selector.config
 ```
 
 Explanation of the command:

@@ -67,7 +67,7 @@ def calculate_AB(df_in : pd.DataFrame):
     df_in.loc[:, AD_columns] = AD_df
     df_in.columns = df_in.columns.str.replace('AD','AB')
     return 
-    pass
+
 
     
 def check_table(input_file):
@@ -88,8 +88,10 @@ if __name__ == '__main__':
     input_files = sys.argv[2:]
     output_name =  sys.argv[1]
     df = concat_csv_files(input_files)
-    print('done concat')
+    print('done concat\nprocessing')
     df = replace_missing_values(df)
+    print('calculate_AB')
+    df = calculate_AB(df)
     print('saving')
     df.to_parquet(f'{output_name}.parquet')
     print(f"Parquet file '{output_name}.parquet' created successfully!")
