@@ -52,7 +52,15 @@ def replace_missing_values(df_in):
     return df
 
 
-    
+def calculate_AB(df_in : pd.DataFrame):
+    """
+    Calculates Allele Ballance  - the ratio of reads aligned at a variant locus that support the alternate allele 
+    """
+    # choose all 
+    AD_df = df_in[df_in.columns[df_in.columns.str.contains('AD')]]
+
+
+    pass
 
     
 def check_table(input_file):

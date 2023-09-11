@@ -4,7 +4,7 @@ params.upload = 'false'
 
 nextflow.enable.dsl=2
 
-process cleanData {
+process processOutput {
     // there is a problem to work it with another venv when using the HUJI slurm
     label "medium_slurm"
    tag "process_${chrom}"
@@ -23,7 +23,7 @@ process cleanData {
     outputName = "${regionFile.simpleName}.${sampleFile.simpleName}"  
     """
     source ${params.VENV}
-    clean_tsv.py ${outputName} ${chrom_tsv.join(' ')}
+    process_output.py ${outputName} ${chrom_tsv.join(' ')}
     """
 }
 
@@ -327,8 +327,8 @@ workflow {
 
     // merge gnomAD data & the sample data
     merged = mergeChrom(gnomAD, samplesOutput).collect()
-    // doing some cleaning of the file
-    cleanD = cleanData(merged, regionFile, sampleFile)
+    // doing some process of the file
+    cleanD = processOutput(merged, regionFile, sampleFile)
 
 
     // upload the data to the dropbox, if params.upload == true

@@ -46,7 +46,7 @@ GH_header='data/read_only/layers_data/headers/geneHancer_AnnotSV_elements.header
 GH_format='CHROM,FROM,TO,GHid,GH_is_elite,GH_type'
 
 # FORMAT="%CHROM\t%POS\t%REF\t%ALT\t%INTERVAL_ID\t%RM_ID\t%GHid\t%GH_is_elite\t%GH_type[\t%GT\t%DP\t%GQ]\n"  with repeatMasker
-FORMAT="%CHROM\t%POS\t%REF\t%ALT\t%INTERVAL_ID\t%GHid\t%GH_is_elite\t%GH_type[\t%GT\t%DP\t%GQ]\n"
+FORMAT="%CHROM\t%POS\t%REF\t%ALT\t%INTERVAL_ID\t%GHid\t%GH_is_elite\t%GH_type[\t%GT\t%DP\t%GQ\t%AD]\n"
 
 # Function to check exit code and exit if not 0
 check_exit_code() {
