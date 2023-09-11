@@ -7,6 +7,9 @@ import numpy as np
 NULL_STRING = ' '
 NULL_INT = -1
 
+# the index of ALT variant in vcf's AD (Allelic depth)
+ALT = 1
+
 def concat_csv_files(csv_files):
     dfs = []  # List to store individual DataFrames from each CSV file
 
@@ -57,9 +60,13 @@ def calculate_AB(df_in : pd.DataFrame):
     Calculates Allele Ballance  - the ratio of reads aligned at a variant locus that support the alternate allele 
     """
     # choose all 
-    AD_df = df_in[df_in.columns[df_in.columns.str.contains('AD')]]
-
-
+    AD_columns = df_in.columns[df_in.columns.str.contains('AD')]
+    AD_df = df_in[AD_columns].copy()
+    AD_df = AD_df.replace(' ','0,0').str.split(',').astype(int).to_numpy()
+    AD_df =  AD_df[:,:,ALT] / np.sum(AD_df, axis=2) 
+    df_in.loc[:, AD_columns] = AD_df
+    df_in.columns = df_in.columns.str.replace('AD','AB')
+    return 
     pass
 
     
