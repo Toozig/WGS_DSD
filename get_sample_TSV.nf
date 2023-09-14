@@ -25,6 +25,7 @@ process processOutput {
     source ${params.VENV}
     process_output.py ${outputName} ${chrom_tsv.join(' ')}
     """
+    
 }
 
 process uploadData {
@@ -112,6 +113,7 @@ process mergeChrom {
     input:
     tuple val(chrom), path(gnomAD), path(gnomADtbi)
     path file_list
+    
 
     output:
     path "${chrom}.tsv"
@@ -327,6 +329,7 @@ workflow {
             }.set { samples }
     proxy_samples = proxySamples(samples.haveRawFile, dataDir).collect()
     sampleInput = samples.noRawFile.combine([regionFile])
+    
     new_samples = getSamples(sampleInput, dataDir).collect()
     samplesOutput = new_samples.concat(proxy_samples).collect()
     // merge gnomAD data & the sample data
@@ -336,7 +339,8 @@ workflow {
     cleanD = processOutput(merged.collect(), regionFile, sampleFile)
 
 
-    // upload the data to the dropbox, if params.upload == true
+
+    // // upload the data to the dropbox, if params.upload == true
     uploadData(cleanD, sampleFile)  
 
 }
