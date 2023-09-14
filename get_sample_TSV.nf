@@ -4,7 +4,7 @@ params.upload = 'false'
 
 nextflow.enable.dsl=2
 
-process cleanData {
+process processOutput {
     // there is a problem to work it with another venv when using the HUJI slurm
     label "medium_slurm"
    tag "process_${chrom}"
@@ -23,8 +23,7 @@ process cleanData {
     outputName = "${regionFile.simpleName}.${sampleFile.simpleName}"  
     """
     source ${params.VENV}
-    clean_tsv.py ${outputName} ${chrom_tsv.join(' ')}
-    ehco "processed file moved to ${params.outputDir}"
+    process_output.py ${outputName} ${chrom_tsv.join(' ')}
     """
     
 }
@@ -280,6 +279,8 @@ workflow {
         V C F - T S V   P I P E L I N E 
          regionFile: ${regionFile}
          sampleFile: ${sampleFile} 
+         gnomADDir: ${params.curGnomADDir}
+         rawSampleDir: ${params.sampleRawDir}
          """
          .stripIndent()
     
@@ -305,8 +306,10 @@ workflow {
             needGnomAD: true
             }.set { chrom }
 
-    chrom.needGnomAD.view {"needGnomAD $it"}
-    chrom.noGnomAD.view {"already have gnomAD $it"}
+
+    // chrom.needGnomAD.view {"needGnomAD $it"}
+    // chrom.noGnomAD.view {"already have gnomAD $it"}
+
     // create region file for each chromosome
     region = createRegionFile(chrom.needGnomAD, regionFile)
     // if the region file have more peaks than MAX_REGIONS, it will be split
@@ -315,7 +318,7 @@ workflow {
     // merge gnomAD data from same chromosome
     gnomAD = mergeGnomAD(splitGnomAD.groupTuple(),dataDir).concat(proxyGnomAD(chrom.noGnomAD,regionFile, dataDir))
     // generates a report to see if the process done well
-    gnomADReport(gnomAD.toList(),regionFile, dataDir)
+    // gnomADReport(gnomAD.toList(),regionFile, dataDir)
 
     // processing the sample files, 
     // checks if the file were processed before
@@ -324,16 +327,17 @@ workflow {
             haveRawFile: file("${params.sampleRawDir}/${it.split("/")[-1].replace('.vcf.gz','')}.tsv" ).exists()
             noRawFile: true
             }.set { samples }
-
+    proxy_samples = proxySamples(samples.haveRawFile, dataDir).collect()
     sampleInput = samples.noRawFile.combine([regionFile])
-    samplesOutput = getSamples(sampleInput, dataDir).collect().concat(proxySamples(samples.haveRawFile, dataDir).collect())
-
-
     
+    new_samples = getSamples(sampleInput, dataDir).collect()
+    samplesOutput = new_samples.concat(proxy_samples).collect()
     // merge gnomAD data & the sample data
-    merged = mergeChrom(gnomAD, samplesOutput.collect()).collect()
-    // // doing some cleaning of the file
-    cleanD = cleanData(merged, regionFile, sampleFile)
+    merged = mergeChrom(gnomAD, samplesOutput)
+
+    // doing some process of the file
+    cleanD = processOutput(merged.collect(), regionFile, sampleFile)
+
 
 
     // // upload the data to the dropbox, if params.upload == true
