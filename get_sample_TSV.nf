@@ -87,10 +87,14 @@ process getSamples{
          path output
         // stdout
     script:
-    vcf = file(pathFile)
-    tbi = file("${pathFile}.tbi")
-    output="${pathFile.split("/")[-1].replace('.vcf.gz','')}.tsv" 
+    vcf = "${pathFile.split('/')[-1]}"
+    tbi = "${vcf}.tbi"
+    output="${vcf.replace('.vcf.gz','')}.tsv" 
+
+    println "working of ${vcf}"
     """
+    ln -s ${pathFile} ${vcf}
+    ln -s ${pathFile}.tbi ${tbi}
     # Loading necessary modules
     module load hurcs bcftools
     getSamples.sh ${vcf} ${regionFile} ${output}
