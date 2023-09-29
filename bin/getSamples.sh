@@ -3,7 +3,7 @@
 
 # Script: getSamples.sh
 # Description: turns a sample VCF file into a TSV, adds some layer data 
-# Usage: bash getSamples.sh <chrom> <sample.vcf.bgz> <peaks.bed>
+# Usage: bash getSamples.sh  <sample.vcf.bgz> <peaks.bed> <output>
 
 # Usage function
 print_usage() {
