@@ -6,7 +6,7 @@ nextflow.enable.dsl=2
 
 process processOutput {
     // there is a problem to work it with another venv when using the HUJI slurm
-    label "medium_slurm"
+    label "big_slurm"
    tag "process_${chrom}"
 
    publishDir params.outputDir , mode: 'copy'
@@ -88,11 +88,17 @@ process getSamples{
          path output
         // stdout
     script:
-    output="${pathFile.split("/")[-1].replace('.vcf.gz','')}.tsv" 
+    vcf = "${pathFile.split('/')[-1]}"
+    tbi = "${vcf}.tbi"
+    output="${vcf.replace('.vcf.gz','')}.tsv" 
+
+    println "working of ${vcf}"
     """
+    ln -s ${pathFile} ${vcf}
+    ln -s ${pathFile}.tbi ${tbi}
     # Loading necessary modules
     module load hurcs bcftools
-    getSamples.sh ${pathFile} ${regionFile} ${output}
+    getSamples.sh ${vcf} ${regionFile} ${output}
     """
 }
 
@@ -329,7 +335,7 @@ workflow {
             }.set { samples }
     proxy_samples = proxySamples(samples.haveRawFile, dataDir).collect()
     sampleInput = samples.noRawFile.combine([regionFile])
-    
+
     new_samples = getSamples(sampleInput, dataDir).collect()
     samplesOutput = new_samples.concat(proxy_samples).collect()
     // merge gnomAD data & the sample data

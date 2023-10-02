@@ -4,6 +4,11 @@ import sys
 import pandas as pd
 import numpy as np
 
+import concurrent.futures
+
+
+NUM_WORKERS = 16 
+
 NULL_STRING = ' '
 NULL_INT = -1
 
@@ -14,9 +19,9 @@ def concat_csv_files(csv_files):
     dfs = []  # List to store individual DataFrames from each CSV file
 
     # Read and append each CSV file to the list
-    for file in csv_files:
-        df = pd.read_csv(file, sep='\t')
-        dfs.append(df)
+
+    dfs = run_parallel(lambda file: pd.read_csv(file, sep='\t', low_memory=False), csv_files)
+
 
     # Concatenate DataFrames into a single DataFrame
     concatenated_df = pd.concat(dfs, ignore_index=True)
@@ -29,34 +34,6 @@ def concat_csv_files(csv_files):
 
 
 
-
-
-def replace_missing_values(df_in):
-    df = df_in.copy()
-    sample_col = set([i.split(':')[0] for i in df.columns if ':' in i])
-    
-    replacement_dict = {'.': NULL_STRING, './.': NULL_STRING, '.|.': NULL_STRING, np.nan: NULL_STRING, None: NULL_STRING}
-    int_replace_dict = {'.':NULL_INT, np.nan:NULL_INT,None:NULL_INT, NULL_STRING:NULL_INT}
-    for i in sample_col:
-        ref_index = (df[f"{i}:GT"] == '0/0') |  (df[f"{i}:GT"] == '0|0') 
-        df.loc[df.index[ref_index],[f'{i}:DP',f'{i}:GQ']] = NULL_INT
-        df[[f'{i}:DP',f'{i}:GQ']] = df[[f'{i}:DP',f'{i}:GQ']].replace(int_replace_dict).astype(int) 
-        df[f'{i}:GT'] = df[f'{i}:GT'].replace(replacement_dict).astype(str).str.replace('|','/')
-        
-    float_col =  ['AF','AF_popmax']
-    df[float_col] = df[float_col].replace(int_replace_dict).astype("float64")
-    
-    str_col = ['CHROM','REF','ALT','FILTER','INTERVAL_ID','GHid','GH_type']
-    df[str_col] = df[str_col].replace(replacement_dict).astype(str)
-    
-    df['GH_is_elite'] = df['GH_is_elite'].replace(int_replace_dict).astype('int64')
-    df['POS'] = df['POS'].astype('int')
-
-    return df
-
-
-
-
 def get_AB(df):
 
     # Split the 'A' column to get individual numbers and convert to integer
@@ -66,9 +43,7 @@ def get_AB(df):
     b_numbers = np.asarray(df.iloc[:,1].str.split(',').apply(lambda x: list(map(int, x))).tolist())
 
     # Calculate the ratio of legit numbers to all numbers
-    print(a_numbers)
-    # print(b_numbers.head())
-    exit
+
     legit_numbers = a_numbers * b_numbers
     total_numbers = np.sum(b_numbers, axis=1)
 
@@ -77,20 +52,12 @@ def get_AB(df):
 
     return ratio
 
-def calculate_AB(df_in : pd.DataFrame):
-    """
-    Calculates Allele Ballance  - the ratio of reads aligned at a variant locus that support the alternate allele 
-    """
 
-    samples = set([i.split(':')[0] for i in df.columns if ':' in i])
-    for s in samples:
-        cur_df = df_in[[f'{s}:GT',f'{s}:AD']].copy().replace(' ','0/0').replace(np.nan,'0,0')
-        AB = get_AB(cur_df)
-        df_in[f'{s}:AD'] = AB
-
-    df_in.columns = df_in.columns.str.replace('AD','AB')
-    return df_in
-
+def calc_sample_ab(s,df_in):
+    print(s)
+    cur_df = df_in[[f'{s}:GT',f'{s}:AD']].copy().replace(' ','0/0').replace(np.nan,'0,0')
+    AB = get_AB(cur_df)
+    df_in.loc[:,f'{s}:AD'] = AB
 
     
 def check_table(input_file):
@@ -107,7 +74,74 @@ def sort_df(df):
     samples.sort()
     columns = np.asarray([[f"{s}:GT",f"{s}:DP",f"{s}:GQ",f"{s}:AB"] for s in samples]).flatten()
     return df[np.concatenate((df.columns[:df.shape[1] - len(columns)],columns))]
+
+
+def run_parallel(func, iterabele, to_return=True):
     
+    with concurrent.futures.ThreadPoolExecutor(max_workers=NUM_WORKERS) as executor:
+        # Submit the function for each item in the list
+        # This starts the parallel execution
+        futures = [executor.submit(func , item) for item in iterabele]
+
+        # Wait for all tasks to complete and retrieve the results
+        results = [future.result() for future in concurrent.futures.as_completed(futures)]
+    if to_return:
+        return results
+
+
+def replace_sample_values(df_in, sample, replacement_dict, int_replace_dict):
+        df = df_in[[f"{sample}:GT",f"{sample}:DP",f"{sample}:GQ",f"{sample}:AD"]].copy()
+
+        ref_index = (df[f"{sample}:GT"] == '0/0') |  (df[f"{sample}:GT"] == '0|0') 
+        df.loc[df.index[ref_index],[f'{sample}:DP',f'{sample}:GQ']] = NULL_INT
+        
+        df[[f'{sample}:DP',f'{sample}:GQ']] = df[[f'{sample}:DP',f'{sample}:GQ']].replace(int_replace_dict).astype(int) 
+        df[f'{sample}:GT'] = df[f'{sample}:GT'].replace(replacement_dict).astype(str).str.replace('|','/')
+        return df
+
+
+
+def replace_missing_values(df_in):
+    df = df_in.copy()
+    
+    
+    replacement_dict = {'.': NULL_STRING, './.': NULL_STRING, '.|.': NULL_STRING, np.nan: NULL_STRING, None: NULL_STRING}
+    int_replace_dict = {'.':NULL_INT, np.nan:NULL_INT,None:NULL_INT, NULL_STRING:NULL_INT}
+
+
+    sample_col = set([i.split(':')[0] for i in df.columns if ':' in i])
+    sample_df  = run_parallel(lambda sample: replace_sample_values(df, sample, replacement_dict, int_replace_dict), sample_col)
+    sample_df = pd.concat(sample_df, axis=1).reset_index(drop=True)
+    df = df.drop(columns=df.columns[df.columns.str.contains(':')]).reset_index(drop=True)
+
+    float_col =  ['AF','AF_popmax']
+    df[float_col] = df[float_col].replace(int_replace_dict).astype("float64")
+    
+    str_col = ['CHROM','REF','ALT','FILTER','INTERVAL_ID','GHid','GH_type']
+    df[str_col] = df[str_col].replace(replacement_dict).astype(str)
+    
+    df['GH_is_elite'] = df['GH_is_elite'].replace(int_replace_dict).astype('int64')
+    df['POS'] = df['POS'].astype('int')
+    df =  pd.concat([df,sample_df],axis=1)
+    return df
+
+
+def calculate_AB(df_in : pd.DataFrame):
+    """
+    Calculates Allele Ballance  - the ratio of reads aligned at a variant locus that support the alternate allele 
+    """
+
+    samples = set([i.split(':')[0] for i in df.columns if ':' in i])
+    for s in samples:
+        cur_df = df_in[[f'{s}:GT',f'{s}:AD']].copy().replace(' ','0/0').replace(np.nan,'0,0')
+        AB = get_AB(cur_df)
+        df_in[f'{s}:AD'] = AB
+
+    df_in.columns = df_in.columns.str.replace('AD','AB')
+    return df_in
+
+
+
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         print("Error: No input file provided.")
