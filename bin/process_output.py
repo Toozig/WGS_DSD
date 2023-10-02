@@ -123,6 +123,21 @@ def replace_missing_values(df_in):
     return df
 
 
+def calculate_AB(df_in : pd.DataFrame):
+    """
+    Calculates Allele Ballance  - the ratio of reads aligned at a variant locus that support the alternate allele 
+    """
+
+    samples = set([i.split(':')[0] for i in df.columns if ':' in i])
+    for s in samples:
+        cur_df = df_in[[f'{s}:GT',f'{s}:AD']].copy().replace(' ','0/0').replace(np.nan,'0,0')
+        AB = get_AB(cur_df)
+        df_in[f'{s}:AD'] = AB
+
+    df_in.columns = df_in.columns.str.replace('AD','AB')
+    return df_in
+
+
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         print("Error: No input file provided.")

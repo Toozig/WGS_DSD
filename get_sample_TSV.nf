@@ -6,7 +6,7 @@ nextflow.enable.dsl=2
 
 process processOutput {
     // there is a problem to work it with another venv when using the HUJI slurm
-    label "medium_slurm"
+    label "big_slurm"
    tag "process_${chrom}"
 
    publishDir params.outputDir , mode: 'copy'
