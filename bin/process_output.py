@@ -3,21 +3,23 @@
 import sys
 import pandas as pd
 import numpy as np
+
 import concurrent.futures
 
 
 NUM_WORKERS = 16 
+
 NULL_STRING = ' '
 NULL_INT = -1
 
 # the index of ALT variant in vcf's AD (Allelic depth)
 ALT = 1
 
-
 def concat_csv_files(csv_files):
     dfs = []  # List to store individual DataFrames from each CSV file
 
     # Read and append each CSV file to the list
+
     dfs = run_parallel(lambda file: pd.read_csv(file, sep='\t', low_memory=False), csv_files)
 
 
@@ -31,7 +33,9 @@ def concat_csv_files(csv_files):
     return concatenated_df
 
 
+
 def get_AB(df):
+
     # Split the 'A' column to get individual numbers and convert to integer
     a_numbers = np.asarray(df.iloc[:,0].str.split('/').apply(lambda x: list(map(int, x))).tolist())
 
@@ -39,8 +43,6 @@ def get_AB(df):
     b_numbers = np.asarray(df.iloc[:,1].str.split(',').apply(lambda x: list(map(int, x))).tolist())
 
     # Calculate the ratio of legit numbers to all numbers
-
-    # print(b_numbers.head())
 
     legit_numbers = a_numbers * b_numbers
     total_numbers = np.sum(b_numbers, axis=1)
@@ -72,6 +74,7 @@ def sort_df(df):
     samples.sort()
     columns = np.asarray([[f"{s}:GT",f"{s}:DP",f"{s}:GQ",f"{s}:AB"] for s in samples]).flatten()
     return df[np.concatenate((df.columns[:df.shape[1] - len(columns)],columns))]
+
 
 def run_parallel(func, iterabele, to_return=True):
     
@@ -136,6 +139,7 @@ def calculate_AB(df_in : pd.DataFrame):
 
     df_in.columns = df_in.columns.str.replace('AD','AB')
     return df_in
+
 
 
 if __name__ == '__main__':
