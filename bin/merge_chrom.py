@@ -47,6 +47,7 @@ def main(csv_files, chrom):
     # Read and append each CSV file to the list
     for file in csv_files:
         df = pd.read_csv(file, sep='\t')
+        df = df.dropna(axis=1, how='all')
         df.columns = [col.split(']')[1] for col in df.columns]
         df = df[df.CHROM == chrom]
         df = df.set_index([col for col in df.columns if ':' not in col])

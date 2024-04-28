@@ -1,8 +1,8 @@
 {
   "processedOutputDir": "data/read_only/samples/processed",
   "gnomADByRegionDir": "data/pipeline_outputs/variants_gnomAD",
-  "DBXCLI" : "/cs/usr/toozig/dbxcli",
-  "VENV" : "/cs/labs/michall/toozig/new_venv/bin/activate",
+  "DBXCLI" : "dbxcli",
+  "VENV" : "/home/dsi/toozig/.virtualenvs/deepBindEnv/bin/activate",
 
   "REGION_SPLIT_SIZE" : 6000,
   "MAX_REGIONS" : 10000,

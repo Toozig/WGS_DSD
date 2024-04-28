@@ -62,7 +62,7 @@ Explanation of the command:
 
 - `~/nextflow run get_sample_TSV.nf`: Initiates the Nextflow process using the `get_sample_TSV.nf` script.
 - `--sample_file data/read_only/samples/processed/all_samples.txt`: Specifies the input file containing paths to processed VCF files.
-- `--params-file pipeline_param.json`: Specifies the parameter configuration JSON file.
+- `-params-file pipeline_param.json`: Specifies the parameter configuration JSON file.
 - `--upload true`: Enables the option to upload results to Dropbox.
 - `-c process-selector.config`: Optionally uses the `process-selector.config` file for configuration (if available).
 

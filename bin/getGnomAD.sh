@@ -19,8 +19,8 @@ regionFile=$2
 output=$3
 
 # URL of the gnomAD VCF file for the specified chromosome
-#VCF="https://gnomad-public-us-east-1.s3.amazonaws.com/release/3.1.2/vcf/genomes/gnomad.genomes.v3.1.2.sites.${chrom}.vcf.bgz"
-VCF="/cs/prt3/gnomAD_data/chr_vcf/gnomad.genomes.v3.1.2.sites.${chrom}.vcf.bgz"
+VCF="https://gnomad-public-us-east-1.s3.amazonaws.com/release/3.1.2/vcf/genomes/gnomad.genomes.v3.1.2.sites.${chrom}.vcf.bgz"
+# VCF="/cs/prt3/gnomAD_data/chr_vcf/gnomad.genomes.v3.1.2.sites.${chrom}.vcf.bgz"
 ln -s "${VCF}.tbi" .
 format="%CHROM\t%POS\t%REF\t%ALT\t%FILTER\t%AF\t%AF_popmax\n"  # Define desired output format
 

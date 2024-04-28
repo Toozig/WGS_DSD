@@ -117,10 +117,10 @@ def replace_missing_values(df_in):
     float_col =  ['AF','AF_popmax']
     df[float_col] = df[float_col].replace(int_replace_dict).astype("float64")
     
-    str_col = ['CHROM','REF','ALT','FILTER','INTERVAL_ID','GHid','GH_type']
+    str_col = ['CHROM','REF','ALT','FILTER','INTERVAL_ID']
     df[str_col] = df[str_col].replace(replacement_dict).astype(str)
     
-    df['GH_is_elite'] = df['GH_is_elite'].replace(int_replace_dict).astype('int64')
+    # df['GH_is_elite'] = df['GH_is_elite'].replace(int_replace_dict).astype('int64')
     df['POS'] = df['POS'].astype('int')
     df =  pd.concat([df,sample_df],axis=1)
     return df

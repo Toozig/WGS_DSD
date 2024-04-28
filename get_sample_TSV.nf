@@ -1,4 +1,4 @@
-params.sample_file = ''
+params.flatten = ''
 params.bed_file = ''
 params.upload = 'false'
 
@@ -45,6 +45,7 @@ process uploadData {
         ${params.DBXCLI} put $parquetFile $params.uploadDir/\$current_date/$parquetFile
         ${params.DBXCLI} put $sampleFile $params.uploadDir/\$current_date/$sampleFile
         """
+        println "done uploading to $sampleFile $params.uploadDir/\$current_date/"
     }
     else{
         println "not uploading"
@@ -97,7 +98,7 @@ process getSamples{
     ln -s ${pathFile} ${vcf}
     ln -s ${pathFile}.tbi ${tbi}
     # Loading necessary modules
-    module load hurcs bcftools
+    
     getSamples.sh ${vcf} ${regionFile} ${output}
     """
 }
@@ -127,7 +128,7 @@ process mergeChrom {
     script:
     outputName = "${chrom}"  
     """
-    source ${params.VENV}
+    source   ${params.VENV}
     merge_chrom.py ${chrom} ${gnomAD} ${outputName} ${file_list.join(' ')}
     """
 }
@@ -157,7 +158,7 @@ process getGnomAD {
    
     """
     # Load necessary modules
-    module load hurcs bcftools
+  
     getGnomAD.sh ${chrom} ${regionFile} ${output}
     """  
 }
@@ -251,7 +252,7 @@ process gnomADReport {
     output="${regionFile.simpleName}.report"
     """
     # Load necessary modules
-    module load hurcs bcftools
+
 
     gnomAD_report.sh ${regionFile} ${regionFile.simpleName} ${params.curGnomADDir} ${output}
     """
@@ -261,13 +262,13 @@ process gnomADReport {
 workflow {
     // using default parameters if they werent provided
     if (params.sample_file == ''){
-        sampleFile = params.all_samples
+        sampleFile = "${baseDir}/${params.all_samples}"
     } else {
         sampleFile = params.sample_file
     }
     
     if (params.bed_file == ''){
-        regionFile = params.cur_regions
+        regionFile = "${baseDir}/${params.cur_regions}"
     } else {
         regionFile = params.bed_file
     }
@@ -275,10 +276,10 @@ workflow {
     // Extract the base name of the bed_file parameter
     regionFile = file(regionFile)
     sampleFile = file(sampleFile)
-    dataDir = file('data/')
+    dataDir = file("${baseDir}/data/")
     params.outputDir = "$params.output_dir/$regionFile.simpleName/$sampleFile.simpleName"
-    params.curGnomADDir = "$params.gnomADByRegionDir/$regionFile.simpleName/gnomAD"
-    params.sampleRawDir=  "$params.gnomADByRegionDir/$regionFile.simpleName/samples_raw"
+    params.curGnomADDir = "${baseDir}/$params.gnomADByRegionDir/$regionFile.simpleName/gnomAD"
+    params.sampleRawDir=  "${baseDir}/$params.gnomADByRegionDir/$regionFile.simpleName/samples_raw"
     checkIfExistsResult(regionFile, sampleFile)
 
     log.info """

@@ -41,13 +41,13 @@ RM_bed='data/read_only/layers_data/repeatsMasker.bed'
 RM_header='data/read_only/layers_data/headers/repeatsMasker.header'
 RM_format='CHROM,FROM,TO,RM_ID,RM_LENGTH,RM_STRAND'
 
-GH_bed='data/read_only/layers_data/GeneHancer_AnnotSV_elements_v5.15.txt'
-GH_header='data/read_only/layers_data/headers/geneHancer_AnnotSV_elements.header'
-GH_format='CHROM,FROM,TO,GHid,GH_is_elite,GH_type'
+# GH_bed='data/read_only/layers_data/GeneHancer_AnnotSV_elements_v5.15.txt'
+# GH_header='data/read_only/layers_data/headers/geneHancer_AnnotSV_elements.header'
+# GH_format='CHROM,FROM,TO,GHid,GH_is_elite,GH_type'
 
 # FORMAT="%CHROM\t%POS\t%REF\t%ALT\t%INTERVAL_ID\t%RM_ID\t%GHid\t%GH_is_elite\t%GH_type[\t%GT\t%DP\t%GQ]\n"  with repeatMasker
-FORMAT="%CHROM\t%POS\t%REF\t%ALT\t%INTERVAL_ID\t%GHid\t%GH_is_elite\t%GH_type[\t%GT\t%DP\t%GQ\t%AD]\n"
-
+# FORMAT="%CHROM\t%POS\t%REF\t%ALT\t%INTERVAL_ID\t%GHid\t%GH_is_elite\t%GH_type[\t%GT\t%DP\t%GQ\t%AD]\n"
+FORMAT="%CHROM\t%POS\t%REF\t%ALT\t%INTERVAL_ID\t[\t%GT\t%DP\t%GQ\t%AD]\n"
 # Function to check exit code and exit if not 0
 check_exit_code() {
   if [ $? -ne 0 ]; then
@@ -62,7 +62,7 @@ echo $regionFile $pathFile
 bcftools view -R $regionFile $pathFile  |   # get only variants in the region files
   bcftools annotate -x FILTER,INFO/AF |   # remove the FILTER and AF field from the vcf
   bcftools annotate -a $regionFile -h $region_header -c $region_format  |   # adds the peaks ID to each variants
-  bcftools annotate -a $GH_bed -h $GH_header -c $GH_format | # adds the GeneHancer data
+  # bcftools annotate -a $GH_bed -h $GH_header -c $GH_format | # adds the GeneHancer data
 #  bcftools annotate -a $RM_bed -h $RM_header -c $RM_format |  # adds the repeatmasker data
  bcftools query -H -f "$FORMAT"  -o $output   # saves as table
 
