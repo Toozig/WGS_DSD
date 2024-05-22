@@ -76,7 +76,6 @@ process createRegionFile{
     """
 }
 
-
 process getSamples{
    publishDir params.sampleRawDir , mode: 'copy'
    label "medium_slurm"
@@ -261,8 +260,9 @@ process gnomADReport {
 
 workflow {
     // using default parameters if they werent provided
-    if (params.sample_file == ''){
+    if (params.sample_file == null){
         sampleFile = "${baseDir}/${params.all_samples}"
+        println "using all samples as sampleFile: ${sampleFile}"
     } else {
         sampleFile = params.sample_file
     }
@@ -272,7 +272,8 @@ workflow {
     } else {
         regionFile = params.bed_file
     }
-
+    println "regionFile: ${regionFile}"
+    println "sampleFile: ${sampleFile}"
     // Extract the base name of the bed_file parameter
     regionFile = file(regionFile)
     sampleFile = file(sampleFile)
@@ -281,7 +282,6 @@ workflow {
     params.curGnomADDir = "${baseDir}/$params.gnomADByRegionDir/$regionFile.simpleName/gnomAD"
     params.sampleRawDir=  "${baseDir}/$params.gnomADByRegionDir/$regionFile.simpleName/samples_raw"
     checkIfExistsResult(regionFile, sampleFile)
-
     log.info """
         V C F - T S V   P I P E L I N E 
          regionFile: ${regionFile}
@@ -292,10 +292,8 @@ workflow {
          .stripIndent()
     
     println "starting"
-
     chromosomes = []
     numChromosomes = 23
-
     for (int i = 1; i <= numChromosomes; i++) {
         if (i == 23) {
             chromosomes.add("chrX")
