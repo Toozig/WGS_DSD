@@ -1,0 +1,3 @@
+data/read_only/samples/processed/processed.AS22WG001.trio.genotype.norm.filt.soi.vcf.gz
+data/read_only/samples/processed/processed.AS22WG004.merge.family.vep.vcf.gz
+data/read_only/samples/processed/processed.AS22WG009.trio.genotype.norm.filt.soi.vcf.gz

@@ -346,6 +346,6 @@ workflow {
 
 
     // // upload the data to the dropbox, if params.upload == true
-    uploadData(cleanD, sampleFile)  
+    // uploadData(cleanD, sampleFile)  
 
 }
