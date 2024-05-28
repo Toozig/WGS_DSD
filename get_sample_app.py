@@ -2,6 +2,10 @@ import streamlit as st
 import subprocess
 import json
 import os
+from bin.zip_script import zip_files_in_dir
+import datetime
+
+
 
 # Define help text as global variables
 GNOMADBYREGIONDIR_HELP = "Directory where the gnomAD data should be saved or looked up if it already exists."
@@ -91,20 +95,15 @@ def get_input():
     # try to run the command "dbxcli" to check if it is installed
     check_dbxcli(DBXCLI)
     check_venv(VENV)
-    show_sample(all_samples)
     with open(params_file, 'r') as f:
         params = json.load(f)
     
     st.json(params)
     if len(sample_file):
+        st.write(f'{sample_file}')
         show_sample(sample_file)
     show_sample(bed_file)
     return gnomADByRegionDir, DBXCLI, uploadDir, VENV, MAX_REGIONS, REGION_SPLIT_SIZE, all_samples, output_dir, sample_file, params_file, upload, bed_file
-
-from bin.zip_script import zip_files_in_dir
-import datetime
-import os
-
 
 def list_files(dir):
     r = []
@@ -151,7 +150,7 @@ def main():
         # Display the output
         st.code(stdout.decode(), language='shell')
         st.code(stderr.decode(), language='shell')
-        # data/pipeline_outputs/variants_gnomAD/merged_mATAC_hATAC_0507/test_samples/merged_mATAC_hATAC_0507.test_samples.parquet
+
 
         bed_file_name = os.path.basename(bed_file)
         sample_file_name = os.path.basename(sample_file) if bool(sample_file) else os.path.basename(all_samples)
@@ -163,7 +162,7 @@ def main():
         # Zip the output directory
         zip_path = zip_files_in_dir(script_dir, output_dir, command)
         if upload:
-            upload_to_dropbox(uploadDir, DBXCLI, output_dir)
+            upload_to_dropbox(uploadDir, DBXCLI, zip_path)
         st.write(f"Output directory zipped and uploaded to Dropbox: {zip_path}")
     
         return output_file

@@ -57,14 +57,19 @@ check_exit_code() {
 }
 
 
-echo $regionFile $pathFile
-# Perform various operations on the input data
-bcftools view -R $regionFile $pathFile  |   # get only variants in the region files
-  bcftools annotate -x FILTER,INFO/AF |   # remove the FILTER and AF field from the vcf
-  bcftools annotate -a $regionFile -h $region_header -c $region_format  |   # adds the peaks ID to each variants
-  # bcftools annotate -a $GH_bed -h $GH_header -c $GH_format | # adds the GeneHancer data
-#  bcftools annotate -a $RM_bed -h $RM_header -c $RM_format |  # adds the repeatmasker data
- bcftools query -H -f "$FORMAT"  -o $output   # saves as table
+# echo $regionFile $pathFile
+# # Perform various operations on the input data
+# bcftools view -R $regionFile $pathFile  |   # get only variants in the region files
+#   # bcftools annotate -x FILTER,INFO/AF |   # remove the FILTER and AF field from the vcf
+#   bcftools annotate -a $regionFile -h $region_header -c $region_format  |   # adds the peaks ID to each variants
+# # bcftools annotate -a $GH_bed -h $GH_header -c $GH_format | # adds the GeneHancer data
+# #  bcftools annotate -a $RM_bed -h $RM_header -c $RM_format |  # adds the repeatmasker data
+#  bcftools query -H -f "$FORMAT"  -o $output   # saves as table
+
+
+FORMAT="%CHROM\t%POS\t%REF\t%ALT[\t%GT\t%DP\t%GQ\t%AD]\n"
+bcftools query -s AS22WG004 -H -R $regionFile -f "$FORMAT" $pathFile 
+
 
 # Check the exit code of the last command
 check_exit_code "bcftools merge samples and annotations"
