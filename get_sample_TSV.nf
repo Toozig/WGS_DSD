@@ -25,7 +25,7 @@ process processOutput {
     source ${params.VENV}
     process_output.py ${outputName} ${chrom_tsv.join(' ')}
     """
-    
+
 }
 
 process uploadData {
@@ -281,7 +281,7 @@ workflow {
     params.outputDir = "$params.output_dir/$regionFile.simpleName/$sampleFile.simpleName"
     params.curGnomADDir = "${baseDir}/$params.gnomADByRegionDir/$regionFile.simpleName/gnomAD"
     params.sampleRawDir=  "${baseDir}/$params.gnomADByRegionDir/$regionFile.simpleName/samples_raw"
-    checkIfExistsResult(regionFile, sampleFile)
+    // checkIfExistsResult(regionFile, sampleFile)
     log.info """
         V C F - T S V   P I P E L I N E 
          regionFile: ${regionFile}
@@ -329,7 +329,7 @@ workflow {
     // checks if the file were processed before
     println "${params.sampleRawDir}"
     Channel.from(sampleFile.readLines()).branch {
-            haveRawFile: file("${params.sampleRawDir}/${it.split("/")[-1].replace('.vcf.gz','')}.tsv" ).exists()
+            haveRawFile: false //file("${params.sampleRawDir}/${it.split("/")[-1].replace('.vcf.gz','')}.tsv" ).exists()
             noRawFile: true
             }.set { samples }
     proxy_samples = proxySamples(samples.haveRawFile, dataDir).collect()

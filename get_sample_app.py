@@ -140,6 +140,14 @@ def main():
     # Create a button for running the script in the first column
     if col1.button('Run Script'):
         # Construct the command
+
+        bed_file_name = os.path.basename(bed_file)
+        sample_file_name = os.path.basename(sample_file) if bool(sample_file) else os.path.basename(all_samples)
+        bed_name = bed_file_name.split('.')[0]
+        sample_name = sample_file_name.split('.')[0]
+        file_name = f"{bed_name}.{sample_name}.parquet"
+        output_file = os.path.join(output_dir,bed_name,sample_name,file_name)
+        
         command = construct_command(gnomADByRegionDir, DBXCLI, uploadDir, VENV, MAX_REGIONS, REGION_SPLIT_SIZE, all_samples, output_dir, sample_file, params_file, upload, bed_file)
         st.write(f"Running command:")
         st.code(command, language='shell')
@@ -151,20 +159,15 @@ def main():
         st.code(stdout.decode(), language='shell')
         st.code(stderr.decode(), language='shell')
 
-
-        bed_file_name = os.path.basename(bed_file)
-        sample_file_name = os.path.basename(sample_file) if bool(sample_file) else os.path.basename(all_samples)
-        file_name = f'{bed_file_name}.{sample_file_name}.parquet'
-        output_file = os.path.join(output_dir,file_name)
         # get the dir path of this script file
         script_dir = os.path.dirname(os.path.realpath(__file__))
 
         # Zip the output directory
-        zip_path = zip_files_in_dir(script_dir, output_dir, command)
+        zip_path = zip_files_in_dir(output_file,script_dir, output_dir, command)
         if upload:
             upload_to_dropbox(uploadDir, DBXCLI, zip_path)
         st.write(f"Output directory zipped and uploaded to Dropbox: {zip_path}")
-    
+        st.write(f"Output file: {output_file}")
         return output_file
 
     # Create a button for showing the command in the second column

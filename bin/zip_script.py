@@ -29,7 +29,7 @@ def command_to_yaml(command, output_file):
 
     return output_file
 
-def zip_files_in_dir(dir_path, output_dir, command, max_files=100, max_size=5*1024*1024):
+def zip_files_in_dir(output_file,dir_path, output_dir, command, max_files=100, max_size=5*1024*1024):
     # Check if the directory is a git repository
     is_git = '.git' in os.listdir(dir_path)
 
@@ -57,6 +57,10 @@ def zip_files_in_dir(dir_path, output_dir, command, max_files=100, max_size=5*10
         # Add files to the zip file
         for f in files_to_zip:
             zipf.write(os.path.join(dir_path, f), arcname=f)
+
+        # add the output_file
+        file_name = os.path.basename(output_file)
+        zipf.write(output_file, arcname=file_name)
 
         # Add the YAML file to the zip file
         yaml_file = command_to_yaml(command, os.path.join(output_dir, '/tmp/toozig/command.yml'))
